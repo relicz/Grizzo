@@ -1,16 +1,15 @@
 import discord
 import random
 import time
-import token
+import config
 
-#from discord.ext import commands
+from discord.ext import commands
 
-TOKEN = 'token.TOKEN'
 PREFIX = '!'
 
-#COOLDOWN = 10  # In seconds
+COOLDOWN = 10  # In seconds
 
-#cooldown_start = time.time()
+cooldown_start = time.time()
 
 client = discord.Client()
 
@@ -21,10 +20,7 @@ async def on_message(message):
         return
 
     if message.content == PREFIX + 'test':
-        msg = 'Test post please ignore {0.author.mention}'.format(message)
-
-
-    await client.send_message(message.channel, msg)
+        await message.channel.send('test post')
 
 @client.event
 async def on_ready():
@@ -37,6 +33,13 @@ async def on_ready():
 #def shutdown():
  #   client.close()
   #  print("Logged out")
+
+#try:
+     #client.loop.create_task(update_window())
+
+client.run(config.TOKEN)
+#except:
+    #shutdown()
 
 #try:
     # client.loop.create_task(update_window())
