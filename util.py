@@ -10,7 +10,7 @@ ROLL_COMMAND = "!r"
 TEST_COMMAND = "!test1234"
 MEME_COMMAND = "!meme"
 
-multireddit = 'memes+dankmemes+animemes+wholesomeanimemes'
+multireddit = 'memes'
 sub = reddit.subreddit(multireddit)
 
 def dice_roller(message):
