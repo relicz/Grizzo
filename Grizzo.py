@@ -25,7 +25,7 @@ async def test(ctx):
     pass
 
 
-@bot.command()
+@bot.command(aliases=['r'])
 async def roll(ctx, arg):
     await ctx.send(util.dice_roller(ctx, arg))
     pass
