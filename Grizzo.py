@@ -4,6 +4,7 @@ import time
 import praw
 import config
 import util
+import asyncio
 
 from discord.ext import commands
 from discord.utils import get
@@ -34,6 +35,33 @@ async def roll(ctx, arg):
 @bot.command()
 async def meme(ctx):
     await ctx.send(util.meme(ctx))
+    pass
+
+# new bot command for voting on a post
+@bot.command()
+async def vote(ctx, question, choices):
+    
+    choices.strip() # remove leading/trailing spaces from choices
+    choices_arr = choices.split(',') # split choices into array
+    # emojis : apple, orange, banana, watermelon, grapes, cherries, pineapples
+    emojis = ['🍎', '🍊', '🍌', '🍉', '🍇', '🍒', '🍍'] # emojis array to coincide with choices, currently max of 7 (might not properly display in your editor)
+    
+    # create message object and announce the vote
+    message = await ctx.send(embed = util.vote_start(question, choices_arr, emojis))
+    
+    # add reactions
+    i = 0
+    while i < len(choices_arr): # add each selectable choice through an emoji to click
+        await message.add_reaction(emojis[i])
+        i += 1
+        
+    await asyncio.sleep(15)
+    
+    # recreate message object with reactions included
+    message = await ctx.fetch_message(message.id)
+    
+    # count reactions and announce winner
+    await ctx.send(embed = util.tally_up(question, choices_arr, message))
     pass
 
 
