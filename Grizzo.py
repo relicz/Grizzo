@@ -18,6 +18,8 @@ bot = commands.Bot(command_prefix=PREFIX)
 
 #reddit = praw.Reddit(client_id=config.REDDIT_ID, client_secret=config.REDDIT_SECRET,user_agent=config.USER_AGENT)
 
+voice = None
+
 
 @bot.command()
 async def test(ctx):
@@ -37,23 +39,42 @@ async def meme(ctx):
     pass
 
 
-@bot.command()
-async def h(ctx):
-    await ctx.send(util.cmd_help(ctx))
+@bot.command(aliases=['j'])
+async def join(ctx):
+    global voice
+    v_channel = ctx.author.voice.channel
+    voice = get(bot.voice_clients, guild=ctx.guild)
+
+    if voice and voice.is_connected():
+        await voice.move_to(v_channel)
+    else:
+        voice = await v_channel.connect()
     pass
 
 
-#@client.event
-#async def on_message(message):
-    # we do not want the bot to reply to itself
-    #if message.author == client.user:
-      #  return
+@bot.command(aliases=['d'])
+async def disconnect(ctx):
+    await voice.disconnect()
+
+
+@bot.command()
+async def h(ctx):
+    prefix = "Command Prefix: " + PREFIX
+    await ctx.send(util.cmd_help(prefix))
+    pass
+
+
+# @client.event
+# async def on_message(message):
+    #  we do not want the bot to reply to itself
+    # if message.author == client.user:
+      # return
 
    # if message.content == PREFIX + 'test':
        # await message.channel.send('test post')
 
-    #if message.content == PREFIX + 'meme':
-     #   post = sub.random()
+    # if message.content == PREFIX + 'meme':
+     #  post = sub.random()
       #  await message.channel.send(post.url, post.permalink)
 
  #   if message.content.startswith(util.ROLL_COMMAND):

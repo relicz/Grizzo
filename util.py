@@ -47,8 +47,10 @@ def test(ctx):
    # return msg
 
 
-def cmd_help(ctx):
-    output = "Command: test ---- Arguments: None. ---- Function: Sends a test post"
-    output += "\nCommand: roll ---- Arguments: XdY. X = # of dice, Y = # or sides per die. ---- Function: rolls dice"
+def cmd_help(prefix):
+    output = prefix
+    output += "\nCommand: test ---- Arguments: None. ---- Function: Sends a test post"
+    output += "\nCommand: roll or r ---- Arguments: XdY. X = # of dice, Y = # or sides per die. ---- Function: rolls " \
+              "dice"
     output += "\nCommand: meme ---- Arguments: None. ---- Function: Posts a meme from Redit"
     return output
