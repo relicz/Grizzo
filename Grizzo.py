@@ -42,19 +42,28 @@ async def meme(ctx):
 @bot.command(aliases=['j'])
 async def join(ctx):
     global voice
-    v_channel = ctx.author.voice.channel
-    voice = get(bot.voice_clients, guild=ctx.guild)
+    if ctx.author.voice:
+        v_channel = ctx.author.voice.channel
+        voice = get(bot.voice_clients, guild=ctx.guild)
 
-    if voice and voice.is_connected():
-        await voice.move_to(v_channel)
+        if voice and voice.is_connected():
+            await voice.move_to(v_channel)
+        else:
+            voice = await v_channel.connect()
+
     else:
-        voice = await v_channel.connect()
+        await ctx.send("Please enter a voice channel before requesting Grizzo to join.")
     pass
 
 
 @bot.command(aliases=['d'])
 async def disconnect(ctx):
-    await voice.disconnect()
+    global voice
+    if voice and voice.is_connected():
+        await voice.diconnect
+    else:
+        await ctx.send("Grizzo is not connected to a voice channel.")
+    pass
 
 
 @bot.command()
