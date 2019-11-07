@@ -60,7 +60,7 @@ async def join(ctx):
 async def disconnect(ctx):
     global voice
     if voice and voice.is_connected():
-        await voice.diconnect
+        await voice.disconnect()
     else:
         await ctx.send("Grizzo is not connected to a voice channel.")
     pass
