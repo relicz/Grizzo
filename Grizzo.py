@@ -72,10 +72,10 @@ async def disconnect(ctx):
 
 
 @bot.command(aliases=['yt', 'y'])
-async def youtube(ctx, arg):
+async def youtube(ctx, *args):
     global voice
 
-    url = music.search(arg)
+    url = music.search(args)
 
     song_there = os.path.isfile("song.mp3")  # checks if a song file is present
     try:
@@ -98,8 +98,17 @@ async def youtube(ctx, arg):
     voice.source = discord.PCMVolumeTransformer(voice.source)
     voice.source.volume = 0.35
 
-    name = name.rsplit("-", 2)
-    await ctx.send(f"Playing {name[0]}")
+    cut = name.index(music.vid_id)
+    name = name[:(cut-1)]
+    await ctx.send(f"Now playing: ***{name}***")
+    pass
+
+
+@bot.command(aliases=['v'])
+async def volume(ctx, arg: float):
+    global voice
+    voice = get(bot.voice_clients, guild=ctx.guild)
+    voice.source.volume = arg
     pass
 
 

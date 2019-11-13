@@ -58,5 +58,5 @@ def cmd_help(prefix):
     output += "\nCommand: disconnect or d ---- Arguments: None. ---- Function: Disconnects from voice."
     output += "\nCommand: youtube, yt, or y ---- Arguments: Youtube search query. ---- Function: Plays audio to a" \
               " voice channel."
-
+    output += "\nCommand: volume or v ---- Arguments: Number between 0 and 1. ---- Function: Changes bot audio volume."
     return output
