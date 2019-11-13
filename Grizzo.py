@@ -4,6 +4,10 @@ import time
 import praw
 import config
 import util
+import music
+import youtube_dl
+import os
+
 
 from discord.ext import commands
 from discord.utils import get
@@ -59,10 +63,43 @@ async def join(ctx):
 @bot.command(aliases=['d'])
 async def disconnect(ctx):
     global voice
+    voice = get(bot.voice_clients, guild=ctx.guild)
     if voice and voice.is_connected():
         await voice.disconnect()
     else:
         await ctx.send("Grizzo is not connected to a voice channel.")
+    pass
+
+
+@bot.command(aliases=['yt', 'y'])
+async def youtube(ctx, arg):
+    global voice
+
+    url = music.search(arg)
+
+    song_there = os.path.isfile("song.mp3")  # checks if a song file is present
+    try:
+        if song_there:
+            os.remove("song.mp3")
+    except PermissionError:
+        await ctx.send("ERROR: Music playing")
+        return
+
+    await ctx.send("Preparing request")
+
+    voice = get(bot.voice_clients, guild=ctx.guild)
+
+    with youtube_dl.YoutubeDL(music.ydl_opts) as ydl:
+        ydl.download([url])
+
+    name = music.rename(ctx)
+
+    voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: print(f"{name} has finished playing"))
+    voice.source = discord.PCMVolumeTransformer(voice.source)
+    voice.source.volume = 0.35
+
+    name = name.rsplit("-", 2)
+    await ctx.send(f"Playing {name[0]}")
     pass
 
 
@@ -72,28 +109,6 @@ async def h(ctx):
     await ctx.send(util.cmd_help(prefix))
     pass
 
-
-# @client.event
-# async def on_message(message):
-    #  we do not want the bot to reply to itself
-    # if message.author == client.user:
-      # return
-
-   # if message.content == PREFIX + 'test':
-       # await message.channel.send('test post')
-
-    # if message.content == PREFIX + 'meme':
-     #  post = sub.random()
-      #  await message.channel.send(post.url, post.permalink)
-
- #   if message.content.startswith(util.ROLL_COMMAND):
-      #  await message.channel.send(util.dice_roller(message))
-
-   # if message.content.startswith(util.TEST_COMMAND):
-       # await message.channel.send(util.test(message))
-
-  #  if message.content.startswith(util.MEME_COMMAND):
-      #  await message.channel.send(util.meme(message))
 
 @bot.event
 async def on_ready():
