@@ -52,3 +52,32 @@ def cmd_help(ctx):
     output += "\nCommand: roll ---- Arguments: XdY. X = # of dice, Y = # or sides per die. ---- Function: rolls dice"
     output += "\nCommand: meme ---- Arguments: None. ---- Function: Posts a meme from Redit"
     return output
+
+
+def npc(ctx):
+    strength = [random.randint(1, 6) for _ in range(4)]  # creates array with 4 random numbers
+    strength.sort() #sorts array
+    a = strength[1] + strength[2] + strength[3] #adds 3 highest values
+
+    dex = [random.randint(1, 6) for _ in range(4)]
+    dex.sort()
+    b = dex[1] + dex[2] + dex[3]
+
+    constitution = [random.randint(1, 6) for _ in range(4)]
+    constitution.sort()
+    c = constitution[1] + constitution[2] + constitution[3]
+
+    intellligence = [random.randint(1, 6) for _ in range(4)]
+    intellligence.sort()
+    d = intellligence[1] + intellligence[2] + intellligence[3]
+
+    wisdom = [random.randint(1, 6) for _ in range(4)]
+    wisdom.sort()
+    e = wisdom[1] + wisdom[2] + wisdom[3]
+
+    charisma = [random.randint(1, 6) for _ in range(4)]
+    wisdom.sort()
+    f = charisma[1] + charisma[2] + charisma[3]
+
+    output = "Strength: " + str(a) + "\nDexterity: " + str(b) + "\nConstitution: " + str(c) + "\nIntelligence: " + str(d) + "\nWisdom: " + str(e) + "\nCharisma: " + str(f)
+    return output
