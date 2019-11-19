@@ -3,10 +3,10 @@ import random
 import praw
 import config
 
-# reddit = praw.Reddit(client_id=config.REDDIT_ID, client_secret=config.REDDIT_SECRET,user_agent=config.USER_AGENT)
+#reddit = praw.Reddit(client_id=config.REDDIT_ID, client_secret=config.REDDIT_SECRET,user_agent=config.USER_AGENT)
 
-# multireddit = 'memes'
-# sub = reddit.subreddit(multireddit)
+#multireddit = 'memes'
+#sub = reddit.subreddit(multireddit)
 
 
 def dice_roller(ctx, arg):
@@ -117,8 +117,45 @@ def pull(ctx, message_list, num): # context, channel, number of messages
     return pulled_messages_embed
     
 
-def cmd_help(ctx):
-    output = "Command: test ---- Arguments: None. ---- Function: Sends a test post"
-    output += "\nCommand: roll ---- Arguments: XdY. X = # of dice, Y = # or sides per die. ---- Function: rolls dice"
-    output += "\nCommand: meme ---- Arguments: None. ---- Function: Posts a meme from Redit"
+def cmd_help(prefix):
+    output = prefix
+    output += "\nCommand: test ---- Arguments: None. ---- Function: Sends a test post."
+    output += "\nCommand: roll or r ---- Arguments: XdY. X = # of dice, Y = # or sides per die. ---- Function: rolls " \
+              "dice."
+    output += "\nCommand: meme ---- Arguments: None. ---- Function: Posts a meme from Redit."
+    output += "\nCommand: join or j ---- Arguments: None. ---- Function: Joins current voice channel of the author of" \
+              " the command."
+    output += "\nCommand: disconnect or d ---- Arguments: None. ---- Function: Disconnects from voice."
+    output += "\nCommand: youtube, yt, or y ---- Arguments: Youtube search query. ---- Function: Plays audio to a" \
+              " voice channel."
+    output += "\nCommand: volume or v ---- Arguments: Number between 0 and 1. ---- Function: Changes bot audio volume."
+    return output
+
+
+def npc(ctx):
+    strength = [random.randint(1, 6) for _ in range(4)]  # creates array with 4 random numbers
+    strength.sort() #sorts array
+    a = strength[1] + strength[2] + strength[3] #adds 3 highest values
+
+    dex = [random.randint(1, 6) for _ in range(4)]
+    dex.sort()
+    b = dex[1] + dex[2] + dex[3]
+
+    constitution = [random.randint(1, 6) for _ in range(4)]
+    constitution.sort()
+    c = constitution[1] + constitution[2] + constitution[3]
+
+    intellligence = [random.randint(1, 6) for _ in range(4)]
+    intellligence.sort()
+    d = intellligence[1] + intellligence[2] + intellligence[3]
+
+    wisdom = [random.randint(1, 6) for _ in range(4)]
+    wisdom.sort()
+    e = wisdom[1] + wisdom[2] + wisdom[3]
+
+    charisma = [random.randint(1, 6) for _ in range(4)]
+    wisdom.sort()
+    f = charisma[1] + charisma[2] + charisma[3]
+
+    output = "Strength: " + str(a) + "\nDexterity: " + str(b) + "\nConstitution: " + str(c) + "\nIntelligence: " + str(d) + "\nWisdom: " + str(e) + "\nCharisma: " + str(f)
     return output
