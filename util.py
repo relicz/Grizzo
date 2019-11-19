@@ -3,10 +3,10 @@ import random
 import praw
 import config
 
-# reddit = praw.Reddit(client_id=config.REDDIT_ID, client_secret=config.REDDIT_SECRET,user_agent=config.USER_AGENT)
+#reddit = praw.Reddit(client_id=config.REDDIT_ID, client_secret=config.REDDIT_SECRET,user_agent=config.USER_AGENT)
 
-# multireddit = 'memes'
-# sub = reddit.subreddit(multireddit)
+#multireddit = 'memes'
+#sub = reddit.subreddit(multireddit)
 
 
 def dice_roller(ctx, arg):
