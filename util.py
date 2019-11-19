@@ -47,10 +47,18 @@ def test(ctx):
    # return msg
 
 
-def cmd_help(ctx):
-    output = "Command: test ---- Arguments: None. ---- Function: Sends a test post"
-    output += "\nCommand: roll ---- Arguments: XdY. X = # of dice, Y = # or sides per die. ---- Function: rolls dice"
-    output += "\nCommand: meme ---- Arguments: None. ---- Function: Posts a meme from Redit"
+def cmd_help(prefix):
+    output = prefix
+    output += "\nCommand: test ---- Arguments: None. ---- Function: Sends a test post."
+    output += "\nCommand: roll or r ---- Arguments: XdY. X = # of dice, Y = # or sides per die. ---- Function: rolls " \
+              "dice."
+    output += "\nCommand: meme ---- Arguments: None. ---- Function: Posts a meme from Redit."
+    output += "\nCommand: join or j ---- Arguments: None. ---- Function: Joins current voice channel of the author of" \
+              " the command."
+    output += "\nCommand: disconnect or d ---- Arguments: None. ---- Function: Disconnects from voice."
+    output += "\nCommand: youtube, yt, or y ---- Arguments: Youtube search query. ---- Function: Plays audio to a" \
+              " voice channel."
+    output += "\nCommand: volume or v ---- Arguments: Number between 0 and 1. ---- Function: Changes bot audio volume."
     return output
 
 
