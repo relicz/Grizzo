@@ -42,6 +42,11 @@ async def h(ctx):
     await ctx.send(util.cmd_help(ctx))
     pass
 
+@bot.command()
+async def npc(ctx):
+    await ctx.send(util.npc(ctx))
+    pass
+
 
 #@client.event
 #async def on_message(message):
