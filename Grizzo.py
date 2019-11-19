@@ -156,6 +156,33 @@ async def youtube(ctx, *args):
     pass
 
 
+@bot.command()
+async def pause(ctx):
+    global voice
+    voice = get(bot.voice_clients, guild=ctx.guild)
+    if voice.is_playing():
+        voice.pause()
+    pass
+
+
+@bot.command()
+async def play(ctx):
+    global voice
+    voice = get(bot.voice_clients, guild=ctx.guild)
+    if voice.is_paused():
+        voice.resume()
+    pass
+
+
+@bot.command()
+async def stop(ctx):
+    global voice
+    voice = get(bot.voice_clients, guild=ctx.guild)
+    if voice.is_playing():
+        voice.stop()
+    pass
+
+
 @bot.command(aliases=['v'])
 async def volume(ctx, arg: float):
     global voice
