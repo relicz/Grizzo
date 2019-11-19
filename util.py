@@ -45,7 +45,77 @@ def test(ctx):
     #post = sub.random()
    # msg = "{}\nSource: {}".format(post.url, post.permalink)
    # return msg
+   
+# define function for creating initial vote
+def vote_start(question, choices_arr, emojis):
+    print("Vote is being made...")
+    
+    # create embed
+    vote_announce = discord.Embed(title="Time for a vote!")
+    vote_announce.add_field(name = "Question", value = question) # add question field to embed
+    
+    # assign emojis to choices as a string and add to embed
+    choices_string = ""
+    i = 0
+    while i < len(choices_arr): # until all choices have been assigned
+        choices_string += (emojis[i] + "" + choices_arr[i] + "\n")
+        i +=1 # concatenate string that will be displayed in embed
+    vote_announce.add_field(name = "Choices", value = choices_string)
+    
+    # return embedded vote announcement
+    return vote_announce
 
+# define function for counting the votes
+def tally_up(question, choices_arr, message):
+    
+    vote_string = "vote" # singular or plural amount of votes?
+    tie_flag = 0 # was there a tie?
+    
+    # tally dictionary
+    tallies = {react.emoji: react.count for react in message.reactions}
+    
+    # check for a tie
+    tallies_sorted = sorted(tallies.values(), reverse=True) # sort highest numbers
+    if tallies_sorted[0] != tallies_sorted[1]: # if there is only one maximum, find the winner
+        winner_count = max(tallies.values()) - 1 # assign winner count
+        winner_emoji = max(tallies, key = tallies.get) # assign winner emoji
+    
+        winner = choices_arr[list(tallies.keys()).index(winner_emoji)] # assign winner using the index of winner_emoji
+    
+        # if more than one vote or no votes, change string to votes
+        if winner_count > 1 or winner_count == 0: #
+            vote_string = "votes"
+        
+    else: # there's a tie
+        tie_flag = 1
+        
+    
+    vote_winner = discord.Embed(title="We have a winner!")
+    if tie_flag == 0: # add field based on whether there's a tie or not
+        vote_winner.add_field(name = "And your winner is...", value = 
+                          "__**" + winner + "**__ (" + winner_emoji + ")" +
+                          " with __**" + str(winner_count) + "**__ " + vote_string + "!")
+    else:
+        vote_winner.add_field(name = "And your winner is...", value = 
+                          "No one! It's a tie!")
+    
+    return vote_winner
+
+# define function for pulling a certain amount of messages
+def pull(ctx, message_list, num): # context, channel, number of messages
+    random.shuffle(message_list) # randomize message list
+    message_list = message_list[0:num] # strip to number of inputted messages
+
+    pulled_messages_string = "" # string to place in embed
+    for message in message_list:
+        pulled_messages_string += message + "\n" # concatenate messages
+        
+    # create embed
+    pulled_messages_embed = discord.Embed(title=None)
+    pulled_messages_embed.add_field(name = "Messages:", value = pulled_messages_string)
+    
+    return pulled_messages_embed
+    
 
 def cmd_help(prefix):
     output = prefix
