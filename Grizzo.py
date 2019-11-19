@@ -44,7 +44,8 @@ async def vote(ctx, question, choices):
     choices.strip() # remove leading/trailing spaces from choices
     choices_arr = choices.split(',') # split choices into array
     # emojis : apple, orange, banana, watermelon, grapes, cherries, pineapples
-    emojis = ['🍎', '🍊', '🍌', '🍉', '🍇', '🍒', '🍍'] # emojis array to coincide with choices, currently max of 7 (might not properly display in your editor)
+    emojis = ['🍎', '🍊', '🍌', '🍉', '🍇', '🍒', '🍍'] # emojis array to coincide with choices
+    # currently max of 7 (might not properly display in your editor)
     
     # create message object and announce the vote
     message = await ctx.send(embed = util.vote_start(question, choices_arr, emojis))
@@ -55,6 +56,7 @@ async def vote(ctx, question, choices):
         await message.add_reaction(emojis[i])
         i += 1
         
+    # wait for x seconds
     await asyncio.sleep(15)
     
     # recreate message object with reactions included
@@ -64,6 +66,24 @@ async def vote(ctx, question, choices):
     await ctx.send(embed = util.tally_up(question, choices_arr, message))
     pass
 
+# new bot command for pulling messages
+@bot.command()
+async def pull(ctx, chan = "general", num = 5, hist_num = 100): # context, channel, number of messages, how far the history goes
+    # defaults included
+    
+    # create channel object
+    channel = discord.utils.get(ctx.guild.channels,name = chan)
+    # create message history
+    messages = await channel.history(limit= hist_num).flatten()
+    
+    message_list = []
+    
+    i = 0
+    while i < len(messages):
+        message_list.append(messages[i].content)
+        i += 1
+    await ctx.send(embed = util.pull(ctx, message_list, num))
+    pass
 
 @bot.command()
 async def h(ctx):

@@ -59,7 +59,7 @@ def vote_start(question, choices_arr, emojis):
     i = 0
     while i < len(choices_arr): # until all choices have been assigned
         choices_string += (emojis[i] + "" + choices_arr[i] + "\n")
-        i +=1 # append to string that will be displayed in embed
+        i +=1 # concatenate string that will be displayed in embed
     vote_announce.add_field(name = "Choices", value = choices_string)
     
     # return embedded vote announcement
@@ -100,6 +100,22 @@ def tally_up(question, choices_arr, message):
                           "No one! It's a tie!")
     
     return vote_winner
+
+# define function for pulling a certain amount of messages
+def pull(ctx, message_list, num): # context, channel, number of messages
+    random.shuffle(message_list) # randomize message list
+    message_list = message_list[0:num] # strip to number of inputted messages
+
+    pulled_messages_string = "" # string to place in embed
+    for message in message_list:
+        pulled_messages_string += message + "\n" # concatenate messages
+        
+    # create embed
+    pulled_messages_embed = discord.Embed(title=None)
+    pulled_messages_embed.add_field(name = "Messages:", value = pulled_messages_string)
+    
+    return pulled_messages_embed
+    
 
 def cmd_help(ctx):
     output = "Command: test ---- Arguments: None. ---- Function: Sends a test post"
