@@ -94,6 +94,7 @@ async def pull(ctx, chan = "general", num = 5, hist_num = 100): # context, chann
     await ctx.send(embed = util.pull(ctx, message_list, num))
     pass
 
+
 @bot.command(aliases=['j'], brief='Joins the users current voice channel', description='Arguments: None.\nFunction:'
                                                                                        ' Joins current voice channel of'
                                                                                        ' the author of the command.')
