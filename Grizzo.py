@@ -227,7 +227,7 @@ async def h(ctx):
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(status=discord.Status.idle, activity=discord.Game('Type !h for help'))
+    await bot.change_presence(status=discord.Status.idle, activity=discord.Game('Type !help for help'))
     print('Logged in as')
     print(bot.user.name)
     print(bot.user.id)
