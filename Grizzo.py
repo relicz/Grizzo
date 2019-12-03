@@ -46,8 +46,14 @@ async def meme(ctx):
     await ctx.send(util.meme(ctx))
     pass
 
+
 # new bot command for voting on a post
-@bot.command()
+@bot.command(brief='Creates a voting poll to vote on a post', description='Arguments: "Question" "Choices". Question '
+                                                                          'is the question for the vote, Choices is a '
+                                                                          'list of choices, split by a comma and a '
+                                                                          'space.\nFunction: Creates a poll for users '
+                                                                          'to vote on using the question and the '
+                                                                          'choices entered.')
 async def vote(ctx, question, choices):
     
     choices.strip() # remove leading/trailing spaces from choices
@@ -75,9 +81,15 @@ async def vote(ctx, question, choices):
     await ctx.send(embed = util.tally_up(question, choices_arr, message))
     pass
 
+
 # new bot command for pulling messages
-@bot.command()
-async def pull(ctx, chan = "general", num = 5, hist_num = 100): # context, channel, number of messages, how far the history goes
+@bot.command(brief='Pulls messages from a text channel', description='Arguments: "Channel" n m. '
+                                                                     'Channel name, n = number of messages '
+                                                                     'to be pulled, m =  how many messages back '
+                                                                     'to be accessed.\nFunction: Pulls n messages from '
+                                                                     'channel, as far as m messages back')
+async def pull(ctx, chan = "general", num = 5, hist_num = 100): # context, channel, number of messages, how far the
+    # history goes
     # defaults included
     
     # create channel object
@@ -93,6 +105,7 @@ async def pull(ctx, chan = "general", num = 5, hist_num = 100): # context, chann
         i += 1
     await ctx.send(embed = util.pull(ctx, message_list, num))
     pass
+
 
 @bot.command(aliases=['j'], brief='Joins the users current voice channel', description='Arguments: None.\nFunction:'
                                                                                        ' Joins current voice channel of'
@@ -112,7 +125,9 @@ async def join(ctx):
         await ctx.send("Please enter a voice channel before requesting Grizzo to join.")
     pass
 
-@bot.command()
+
+@bot.command(brief='Random stat generator for an NPC', description='Arguments: None\nFunction: Random stat generator '
+                                                                   'for an NPC')
 async def npc(ctx):
     await ctx.send(util.npc(ctx))
     pass
@@ -217,11 +232,11 @@ async def volume(ctx, arg: float):
     pass
 
 
-@bot.command()
-async def h(ctx):
-    prefix = "Command Prefix: " + PREFIX
-    await ctx.send(util.cmd_help(prefix))
-    pass
+# @bot.command()
+# async def h(ctx):
+    # prefix = "Command Prefix: " + PREFIX
+    # await ctx.send(util.cmd_help(prefix))
+    # pass
 
 
 @bot.event
