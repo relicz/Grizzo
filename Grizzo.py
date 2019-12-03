@@ -25,25 +25,31 @@ bot = commands.Bot(command_prefix=PREFIX)
 voice = None
 
 
-@bot.command()
+@bot.command(brief='Sends a test message to a server')
 async def test(ctx):
     await ctx.send(util.test(ctx))
     pass
 
 
-@bot.command(aliases=['r'])
+@bot.command(aliases=['r'], brief='Rolls dice of variable number of sides', description='Arguments: XdY. X = # of dice,'
+                                                                                        ' Y = # or sides per die.\n'
+                                                                                        'Function: rolls dice of '
+                                                                                        'variable side lengths.')
 async def roll(ctx, arg):
     await ctx.send(util.dice_roller(ctx, arg))
     pass
 
 
-@bot.command()
+@bot.command(brief='Sends a random meme from reddit', description='Arguments: None.\nFunction: Posts a meme from'
+                                                                  ' Redit.')
 async def meme(ctx):
     await ctx.send(util.meme(ctx))
     pass
 
 
-@bot.command(aliases=['j'])
+@bot.command(aliases=['j'], brief='Joins the users current voice channel', description='Arguments: None.\nFunction:'
+                                                                                       ' Joins current voice channel of'
+                                                                                       ' the author of the command.')
 async def join(ctx):
     global voice
     if ctx.author.voice:
@@ -60,7 +66,9 @@ async def join(ctx):
     pass
 
 
-@bot.command(aliases=['d'])
+@bot.command(aliases=['d'], brief='Disconnects from current voice channel', description='Arguments: None.\n'
+                                                                                        'Function: Disconnects from '
+                                                                                        'voice.')
 async def disconnect(ctx):
     global voice
     voice = get(bot.voice_clients, guild=ctx.guild)
@@ -71,9 +79,24 @@ async def disconnect(ctx):
     pass
 
 
-@bot.command(aliases=['yt', 'y'])
+@bot.command(aliases=['yt', 'y'], brief='Plays audio from a YouTube video', description='Arguments: Youtube search '
+                                                                                        'query.\nFunction: Plays '
+                                                                                        'audio to a voice channel from '
+                                                                                        'a YouTube video')
 async def youtube(ctx, *args):
     global voice
+
+    if ctx.author.voice:  # If grizzo is not in a voice channel, auto join the one the user is in.
+        v_channel = ctx.author.voice.channel
+        voice = get(bot.voice_clients, guild=ctx.guild)
+
+        if voice and voice.is_connected():
+            await voice.move_to(v_channel)
+        else:
+            voice = await v_channel.connect()
+
+    else:
+        await ctx.send("Please enter a voice channel before requesting Grizzo to play a song.")
 
     url = music.search(args)
 
@@ -104,7 +127,8 @@ async def youtube(ctx, *args):
     pass
 
 
-@bot.command()
+@bot.command(brief='Pauses current audio source', description='Arguments: None.\nFunction: Pauses current audio '
+                                                              'source.')
 async def pause(ctx):
     global voice
     voice = get(bot.voice_clients, guild=ctx.guild)
@@ -113,7 +137,8 @@ async def pause(ctx):
     pass
 
 
-@bot.command()
+@bot.command(brief='Resumes current audio source if paused', description='Arguments: None.\nFunction: Resumes '
+                                                                         'current audio source if paused.')
 async def play(ctx):
     global voice
     voice = get(bot.voice_clients, guild=ctx.guild)
@@ -122,7 +147,7 @@ async def play(ctx):
     pass
 
 
-@bot.command()
+@bot.command(brief='Stops audio source', description='Arguments: None.\nFunction: Stops current audio source.')
 async def stop(ctx):
     global voice
     voice = get(bot.voice_clients, guild=ctx.guild)
@@ -131,7 +156,8 @@ async def stop(ctx):
     pass
 
 
-@bot.command(aliases=['v'])
+@bot.command(aliases=['v'], brief='Changes audio volume', description='Arguments: Number between 0 and 1.\n'
+                                                                      'Function: Changes bot audio volume.')
 async def volume(ctx, arg: float):
     global voice
     voice = get(bot.voice_clients, guild=ctx.guild)
