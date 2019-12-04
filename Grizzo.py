@@ -8,6 +8,7 @@ import music
 import youtube_dl
 import os
 import asyncio
+import games
 
 from discord.ext import commands
 from discord.utils import get
@@ -215,6 +216,51 @@ async def volume(ctx, arg: float):
     global voice
     voice = get(bot.voice_clients, guild=ctx.guild)
     voice.source.volume = arg
+    pass
+
+
+@bot.command()
+async def blackjack(ctx): ########################### veeeeeeeeeeeery rough, needs some fixing
+
+    status = ""
+    
+    deck = [1, 2, 3, 4, 5,
+            6, 7, 8, 9, 10,
+            11, 12, 13] * 4 # four of each card
+    random.shuffle(deck)
+    
+    player_hand = []
+    enemy_hand = []
+    
+    player_hand = games.deal_cards(deck)
+    enemy_hand = games.deal_cards(deck)
+    
+    if games.get_total(player_hand) == 21:
+        await ctx.send("You've already won with a max hand of " + str(games.get_total(player_hand)))
+    elif games.get_total(enemy_hand) == 21:
+        await ctx.send("You've already lost with the dealer having a max hand of " + str(games.get_total(enemy_hand)))
+    else:
+        await ctx.send("You have " + str(games.get_total(player_hand)) + " while the dealer has " + str(games.get_total(enemy_hand)) + ". Hit or stand?")
+        
+        @bot.command() # nested commands/asyncs definitely aren't the way, don't bother using these nested commands more than once
+        async def hit(ctx):
+            games.hit(player_hand, deck)
+            while games.get_total(enemy_hand) < 15: ## smarter dealer should be implemented
+                games.hit(enemy_hand, deck)
+                
+            final_status = games.get_result(player_hand, enemy_hand, status)
+            await ctx.send("You have " + str(games.get_total(player_hand)) + " while the dealer has " + str(games.get_total(enemy_hand)) + ". " + final_status)
+            pass
+        
+        @bot.command()
+        async def stand(ctx):
+            while games.get_total(enemy_hand) < 15:
+                games.hit(enemy_hand, deck)
+                
+            final_status = games.get_result(player_hand, enemy_hand, status)
+            await ctx.send("You have " + str(games.get_total(player_hand)) + " while the dealer has " + str(games.get_total(enemy_hand)) + ". " + final_status)
+            pass
+        
     pass
 
 
