@@ -41,15 +41,15 @@ async def roll(ctx, arg):
 
 
 @bot.command(brief='Sends a random meme from reddit', description='Arguments: None.\nFunction: Posts a meme from'
-                                                                  ' Redit.')
+                                                                  ' Reddit.')
 async def meme(ctx):
     await ctx.send(util.meme(ctx))
     pass
 
 # new bot command for voting on a post
-@bot.command()
-async def vote(ctx, question, choices):
-    
+@bot.command(brief='Creates a vote for a quick straw poll of the chatroom.', description='Arguments: question, choices, timer')
+async def vote(ctx, question, choices, timer = 15):
+ 
     choices.strip() # remove leading/trailing spaces from choices
     choices_arr = choices.split(',') # split choices into array
     # emojis : apple, orange, banana, watermelon, grapes, cherries, pineapples
@@ -66,7 +66,7 @@ async def vote(ctx, question, choices):
         i += 1
         
     # wait for x seconds
-    await asyncio.sleep(15)
+    await asyncio.sleep(timer)
     
     # recreate message object with reactions included
     message = await ctx.fetch_message(message.id)
@@ -76,7 +76,7 @@ async def vote(ctx, question, choices):
     pass
 
 # new bot command for pulling messages
-@bot.command()
+@bot.command(brief='Pulls a certain amount of messages from a certain channel', description='Arguments: channel, number of messages, history number)
 async def pull(ctx, chan = "general", num = 5, hist_num = 100): # context, channel, number of messages, how far the history goes
     # defaults included
     
