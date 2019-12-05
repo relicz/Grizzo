@@ -5,12 +5,14 @@ import praw
 import config
 import util
 import music
+import hangman
 import youtube_dl
 import os
 import asyncio
 
 from discord.ext import commands
 from discord.utils import get
+from hangman import Hangman
 
 PREFIX = '!'
 
@@ -224,7 +226,7 @@ async def h(ctx):
     await ctx.send(util.cmd_help(prefix))
     pass
 
-
+             
 @bot.event
 async def on_ready():
     await bot.change_presence(status=discord.Status.idle, activity=discord.Game('Type !help for help'))
@@ -233,5 +235,16 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
-
+             
+@bot.event
+async def hangman(ctx);
+        game_message = ""
+        if len(args) > 1:
+            if args[1] == 'start':
+                game.start_game()
+                game_message = 'A word has been randomly selected (all lowercase). \nGuess leters by using `!hangman z` (z is the guessed letter). \n'
+            else:
+                game.guess(message.content)
+        await message.channel.send(game_message + game.get_game_status())
+    
 bot.run(config.TOKEN)
