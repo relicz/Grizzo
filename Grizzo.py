@@ -46,8 +46,13 @@ async def meme(ctx):
     await ctx.send(util.meme(ctx))
     pass
 
+
 # new bot command for voting on a post
-@bot.command()
+@bot.command(brief='Creates a poll for users to vote on', description='Arguments: "q" "c". q = Question for polling, '
+                                                                      'surrounded by quotation marks. c = Poll choices,'
+                                                                      ' separated by commas and surrounded by quotation'
+                                                                      ' marks.\nFunction: Creates a poll based on '
+                                                                      'question q and choices c.')
 async def vote(ctx, question, choices):
     
     choices.strip() # remove leading/trailing spaces from choices
@@ -75,8 +80,12 @@ async def vote(ctx, question, choices):
     await ctx.send(embed = util.tally_up(question, choices_arr, message))
     pass
 
+
 # new bot command for pulling messages
-@bot.command()
+@bot.command(brief='Pulls messages from a text channel', description='Arguments: c n m. c = Channel name. n = number of'
+                                                                     ' messages to pull. m = History (How many messages'
+                                                                     ' back).\nFunction: Takes n messages from channel '
+                                                                     'c, yet not further back than m messages.')
 async def pull(ctx, chan = "general", num = 5, hist_num = 100): # context, channel, number of messages, how far the history goes
     # defaults included
     
@@ -113,7 +122,8 @@ async def join(ctx):
         await ctx.send("Please enter a voice channel before requesting Grizzo to join.")
     pass
 
-@bot.command()
+
+@bot.command(brief='Random stat generator for an NPC')
 async def npc(ctx):
     await ctx.send(util.npc(ctx))
     pass
@@ -150,6 +160,7 @@ async def youtube(ctx, *args):
 
     else:
         await ctx.send("Please enter a voice channel before requesting Grizzo to play a song.")
+        return
 
     url = music.search(args)
 
