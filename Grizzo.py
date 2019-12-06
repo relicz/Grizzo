@@ -22,7 +22,7 @@ cooldown_start = time.time()
 
 bot = commands.Bot(command_prefix=PREFIX)
 
-#reddit = praw.Reddit(client_id=config.REDDIT_ID, client_secret=config.REDDIT_SECRET,user_agent=config.USER_AGENT)
+# reddit = praw.Reddit(client_id=config.REDDIT_ID, client_secret=config.REDDIT_SECRET,user_agent=config.USER_AGENT)
 
 voice = None
 
@@ -48,52 +48,59 @@ async def meme(ctx):
     await ctx.send(util.meme(ctx))
     pass
 
+
 # new bot command for voting on a post
-@bot.command(brief='Creates a vote for a quick straw poll of the chatroom.', description='Arguments: question, choices, timer')
-async def vote(ctx, question, choices, timer = 15):
- 
-    choices.strip() # remove leading/trailing spaces from choices
-    choices_arr = choices.split(',') # split choices into array
+@bot.command(brief='Creates a vote for a quick straw poll of the chatroom.',
+             description='Arguments: "question" "choices" timer. Question and choices must be enclosed in quotation '
+                         'marks. Choices must be separated by commas.\nFunction: Creates a vote for a quick straw poll '
+                         'of the chatroom, ending after \'timer\' seconds')
+async def vote(ctx, question, choices, timer=15):
+    choices.strip()  # remove leading/trailing spaces from choices
+    choices_arr = choices.split(',')  # split choices into array
+
     # emojis : apple, orange, banana, watermelon, grapes, cherries, pineapples
-    emojis = ['🍎', '🍊', '🍌', '🍉', '🍇', '🍒', '🍍'] # emojis array to coincide with choices
+    emojis = ['🍎', '🍊', '🍌', '🍉', '🍇', '🍒', '🍍']  # emojis array to coincide with choices
     # currently max of 7 (might not properly display in your editor)
-    
+
     # create message object and announce the vote
-    message = await ctx.send(embed = util.vote_start(question, choices_arr, emojis))
-    
+    message = await ctx.send(embed=util.vote_start(question, choices_arr, emojis))
+
     # add reactions
     i = 0
-    while i < len(choices_arr): # add each selectable choice through an emoji to click
+    while i < len(choices_arr):  # add each selectable choice through an emoji to click
         await message.add_reaction(emojis[i])
         i += 1
-        
+
     # wait for x seconds
     await asyncio.sleep(timer)
-    
+
     # recreate message object with reactions included
     message = await ctx.fetch_message(message.id)
-    
+
     # count reactions and announce winner
-    await ctx.send(embed = util.tally_up(question, choices_arr, message))
+    await ctx.send(embed=util.tally_up(question, choices_arr, message))
     pass
 
+
 # new bot command for pulling messages
-@bot.command(brief='Pulls a certain amount of messages from a certain channel', description='Arguments: channel, number of messages, history number)
-async def pull(ctx, chan = "general", num = 5, hist_num = 100): # context, channel, number of messages, how far the history goes
+@bot.command(brief='Pulls a certain amount of messages from a certain channel',
+             description='Arguments: channel, number of messages, history number.\nFunction: Pulls a specified number'
+                         ' of messages from a specified channel, as far back as specified.')
+async def pull(ctx, chan="general", num=5, hist_num=100):  # context, channel, number of messages, how far the history goes
     # defaults included
-    
+
     # create channel object
-    channel = discord.utils.get(ctx.guild.channels,name = chan)
+    channel = discord.utils.get(ctx.guild.channels, name=chan)
     # create message history
-    messages = await channel.history(limit= hist_num).flatten()
-    
+    messages = await channel.history(limit=hist_num).flatten()
+
     message_list = []
-    
+
     i = 0
     while i < len(messages):
         message_list.append(messages[i].content)
         i += 1
-    await ctx.send(embed = util.pull(ctx, message_list, num))
+    await ctx.send(embed=util.pull(ctx, message_list, num))
     pass
 
 
@@ -115,7 +122,8 @@ async def join(ctx):
         await ctx.send("Please enter a voice channel before requesting Grizzo to join.")
     pass
 
-@bot.command()
+
+@bot.command(brief='Random stat generator for an NPC')
 async def npc(ctx):
     await ctx.send(util.npc(ctx))
     pass
@@ -152,6 +160,7 @@ async def youtube(ctx, *args):
 
     else:
         await ctx.send("Please enter a voice channel before requesting Grizzo to play a song.")
+        return
 
     url = music.search(args)
 
