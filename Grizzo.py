@@ -145,10 +145,10 @@ async def disconnect(ctx):
                                                                                         'a YouTube video')
 async def youtube(ctx, *args):
     global voice
+    voice = get(bot.voice_clients, guild=ctx.guild)
 
     if ctx.author.voice:  # If grizzo is not in a voice channel, auto join the one the user is in.
         v_channel = ctx.author.voice.channel
-        voice = get(bot.voice_clients, guild=ctx.guild)
 
         if voice and voice.is_connected():
             await voice.move_to(v_channel)
@@ -161,24 +161,24 @@ async def youtube(ctx, *args):
 
     url = music.search(args)
 
-    song_there = os.path.isfile("song.mp3")  # checks if a song file is present
+    song = "song" + str(ctx.guild.id) + ".mp3"
+
+    song_there = os.path.isfile(song)  # checks if a song file is present
     try:
         if song_there:
-            os.remove("song.mp3")
+            os.remove(song)
     except PermissionError:
         await ctx.send("ERROR: Music playing")
         return
 
     await ctx.send("Preparing request")
 
-    voice = get(bot.voice_clients, guild=ctx.guild)
-
     with youtube_dl.YoutubeDL(music.ydl_opts) as ydl:
         ydl.download([url])
 
-    name = music.rename(ctx)
+    name = music.rename(ctx, song)
 
-    voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: print(f"{name} has finished playing"))
+    voice.play(discord.FFmpegPCMAudio(song), after=lambda e: print(f"{name} has finished playing"))
     voice.source = discord.PCMVolumeTransformer(voice.source)
     voice.source.volume = 0.35
 
