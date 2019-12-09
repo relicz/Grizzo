@@ -18,12 +18,13 @@ ydl_opts = {  # Settings for the downloader
 }
 
 
-def rename(ctx):  # renames file to song.mp3
+def rename(ctx, song):  # renames file to song.mp3
+    ytid = vid_id + ".mp3"
     for file in os.listdir("./"):
-        if file.endswith(".mp3"):
+        if file.endswith(ytid):
             name = file
             print(f"Renamed File: {file}\n")
-            os.rename(file, "song.mp3")
+            os.rename(file, song)
     return name  # returns original file name
 
 
@@ -37,4 +38,3 @@ def search(args):  # Takes user entered string and outputs a youtube URL
     vid_id = results[0]  # Establish the vid_id as a global var to cut from the name
     url = "http://www.youtube.com/watch?v=" + vid_id
     return url
-
