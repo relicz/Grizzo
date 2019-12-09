@@ -3,7 +3,9 @@
 
 -Dependancies
 	python 3.7			https://www.python.org/downloads/
+	
 	ffmpeg				https://www.ffmpeg.org/
+	
 	discord.py 			https://discordpy.readthedocs.io/en/latest/
 	praw(and reddit api key)	https://praw.readthedocs.io/en/ and https://www.reddit.com/prefs/apps
 	youtube_dl			https://pypi.org/project/youtube_dl/
