@@ -183,7 +183,6 @@ def censorword(phrase, message):
     output = ""
     # sql
     # if has_value("words", "word", phrase):
-    DBAddCensor(message.channel.guild.id, phrase)
     if phrase in DBGetCensors(message.channel.guild.id):
         output = ('{}, {} is already censored.'.format(message.author.mention, phrase))
     else:
@@ -192,6 +191,7 @@ def censorword(phrase, message):
         # arrayCensoredWords.append(phrase)
         output = ('{}, has added "{}" to the censoring list'.format(message.author.mention, phrase))
         print("Censoring: " + phrase)
+        DBAddCensor(message.channel.guild.id, phrase)
         # sql
         # getWords()
     return output
