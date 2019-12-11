@@ -22,7 +22,7 @@ cooldown_start = time.time()
 
 bot = commands.Bot(command_prefix=PREFIX)
 
-# reddit = praw.Reddit(client_id=config.REDDIT_ID, client_secret=config.REDDIT_SECRET,user_agent=config.USER_AGENT)
+reddit = praw.Reddit(client_id=config.REDDIT_ID, client_secret=config.REDDIT_SECRET, user_agent=config.USER_AGENT)
 
 voice = None
 
@@ -86,7 +86,8 @@ async def vote(ctx, question, choices, timer=15):
 @bot.command(brief='Pulls a certain amount of messages from a certain channel',
              description='Arguments: channel, number of messages, history number.\nFunction: Pulls a specified number'
                          ' of messages from a specified channel, as far back as specified.')
-async def pull(ctx, chan="general", num=5, hist_num=100):  # context, channel, number of messages, how far the history goes
+async def pull(ctx, chan="general", num=5,
+               hist_num=100):  # context, channel, number of messages, how far the history goes
     # defaults included
 
     # create channel object
@@ -186,7 +187,7 @@ async def youtube(ctx, *args):
     voice.source.volume = 0.35
 
     cut = name.index(music.vid_id)
-    name = name[:(cut-1)]
+    name = name[:(cut - 1)]
     await ctx.send(f"Now playing: ***{name}***")
     pass
 
@@ -235,18 +236,85 @@ async def h(ctx):
     await ctx.send(util.cmd_help(prefix))
     pass
 
-             
-@bot.event
-async def on_ready():
-    await bot.change_presence(status=discord.Status.idle, activity=discord.Game('Type !help for help'))
-    print('Logged in as')
-    print(bot.user.name)
-    print(bot.user.id)
-    print('------')
 
-             
+@bot.command(aliases=['censor'], pass_context=True, brief='Censors a word',
+             description='Arguments: word to censor.\nFunction: adds a word to the censored list')
+async def censorword(ctx, phrase):
+    await ctx.send(util.censorword(phrase, ctx.message))
+    pass
+
+
+@bot.command(aliases=['uncensor'], pass_context=True, brief='Removes a censored word',
+             description='Arguments: word to uncensor.\nFunction: removes a word from the censored list')
+async def uncensorword(ctx, phrase):
+    await ctx.send(util.uncensorword(phrase, ctx.message))
+    pass
+
+
+@bot.command(aliases=['listcensors'], pass_context=True, brief='shows a list of censored words',
+             description='Arguments: none.\nFunction: displays a list of censored messages')
+async def censorlist(ctx):
+    await ctx.send(util.censorlist(ctx.message))
+    pass
+
+
+@bot.command(aliases=['removepin'], pass_context=True, brief='Removes a pin',
+             description='Arguments: pin ID.\nRemove a spcific pin')
+async def unpin(ctx, id):
+    await ctx.send(await util.unpin(ctx.message, id))
+    pass
+
+
+@bot.command(aliases=['findpin'], pass_context=True, brief='Shows more information about a specific pin',
+             description='Arguments: pin ID.\nFunction: displays more information about a spicific pin and lets you jump to the original message')
+async def pin(ctx, id):
+    await ctx.send(content="Pinned by Grizzo", embed=(await util.pin(ctx, id)))
+    pass
+
+
+@bot.command(aliases=['pinnedlist'], pass_context=True, brief='Shows a list of pinned messages',
+             description='Arguments: number to start displaying pins at.\nFunction: displays a list of pins')
+async def pins(ctx, index=0):
+    await ctx.send(await util.listPins(ctx, index))
+    pass
+
+
 @bot.event
-async def hangman(ctx);
+async def on_message(message):
+    if message.author == bot.user:
+        return
+    # profanity filter
+    for xi in util.DBGetCensors(message.channel.guild.id):
+        if xi in message.content.strip().lower():
+            await message.channel.send('{}, your message has been censored'.format(message.author.mention))
+            await message.delete()
+            # print(xi)
+            break
+    # need to have this here so that the commands work
+    await bot.process_commands(message)
+
+
+@bot.event
+async def on_reaction_add(reaction, user):
+    # print(reaction.message)
+    if reaction.emoji == "📌":
+        # util.arrayPinned.append([reaction, user])
+        util.DBAddPin(reaction.message)
+        # util.DBPinMessage(reaction, user)
+        # print(arrayPinned[0][0].message.content)
+        channel = bot.get_channel(reaction.message.channel.id)
+        messageContent = ""
+        if len(reaction.message.content) > 300:
+            messageContent = reaction.message.content[0:299] + "..."
+        else:
+            messageContent = reaction.message.content
+        await channel.send(
+            '{}, has pinned {}\'s message, "{}"'.format(user.mention, reaction.message.author.mention, messageContent))
+        # print(arrayPinned[0][1])
+
+
+@bot.event
+async def hangman(ctx):
         game_message = ""
         if len(args) > 1:
             if args[1] == 'start':
@@ -255,5 +323,14 @@ async def hangman(ctx);
             else:
                 game.guess(message.content)
         await message.channel.send(game_message + game.get_game_status())
-    
+
+@bot.event
+async def on_ready():
+    await bot.change_presence(status=discord.Status.idle, activity=discord.Game('Type !help for help'))
+    print('Logged in as')
+    print(bot.user.name)
+    print(bot.user.id)
+    print('------')
+
+
 bot.run(config.TOKEN)
