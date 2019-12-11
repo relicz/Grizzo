@@ -6,10 +6,10 @@ import pymysql
 import asyncio
 
 # sql database login
-DB_IP = "a2plcpnl0761.prod.iad2.secureserver.net"
-DB_USER = "grizzobot"
-DB_PASSWORD = "7755929"
-DB_NAME = "grizzobot"
+DB_IP = config.DB_IP
+DB_USER = config.DB_USER
+DB_PASSWORD = config.DB_PASSWORD
+DB_NAME = config.DB_NAME
 
 reddit = praw.Reddit(client_id=config.REDDIT_ID, client_secret=config.REDDIT_SECRET,user_agent=config.USER_AGENT)
 
