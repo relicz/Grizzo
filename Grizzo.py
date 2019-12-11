@@ -219,11 +219,13 @@ async def volume(ctx, arg: float):
     pass
 
 
-@bot.command()
-async def blackjack(ctx):
+@bot.command(brief='Play Blackjack', description='Arguments: Optional timer.\n'
+                                                 'Function: Plays a game of Blackjack..')
+async def blackjack(ctx, timer = 15): # default timer of 15 seconds
     # initial variables
     player_hand = []
     enemy_hand = []
+    game_over = 0 # a while loop for this will allow the player to continuously hit if they're allowed to
     
     # blackjack instance
     BJ = games.Blackjack()
@@ -233,55 +235,71 @@ async def blackjack(ctx):
     enemy_hand = BJ.deal_cards()
     
     # emojis: white_check_mark, x
-    emojis = ['✅', '❌'] # emojis array to coincide hit or stand
+    emojis = ['✅', '❌'] # emojis array to coincide with hit or stand
+    
     embed_text = discord.Embed(title = "Blackjack") 
     
     # initial message
-    if BJ.get_total(player_hand) >= 21:
-        embed_text.add_field(name = "Status", value = "You've already won with a max hand of " + str(BJ.get_total(player_hand)) + "!")
+    if BJ.get_total(player_hand) == 21:
+        embed_text.add_field(name = "Status", value = "You've already won with a max hand of " 
+                             + str(BJ.get_total(player_hand)) + "!")
         await ctx.send(embed=embed_text)
-    elif BJ.get_total(enemy_hand) >= 21:
-        embed_text.add_field(name = "Status", value = "You've already lost with the dealer having a max hand of " + str(BJ.get_total(enemy_hand)) + "!")
+    elif BJ.get_total(enemy_hand) == 21:
+        embed_text.add_field(name = "Status", value = "You've already lost with the dealer having a max hand of " 
+                             + str(BJ.get_total(enemy_hand)) + "!")
         await ctx.send(embed=embed_text)
+        
     else:
-        embed_text.add_field(name = "Status", value = "You have " + str(BJ.get_total(player_hand)) + " while the dealer has " + str(BJ.get_total(enemy_hand)) + ". Hit or stand?")
-        message = await ctx.send(embed=embed_text)
-        
-    # add reactions
-    i = 0
-    while i < len(emojis): # represent hit or stand with emojis
-        await message.add_reaction(emojis[i])
-        i += 1
-        
-    # wait for 10 seconds
-    await asyncio.sleep(10)
-    
-    # recreate message object with reactions included
-    message = await ctx.fetch_message(message.id)
-    
-    embed_text = discord.Embed(title = "Blackjack") 
-    
-    # if reactions point to hit or stand
-    if BJ.hit_or_stand(message) == 1: # hit
-        
-        BJ.hit(player_hand)
-        while BJ.get_total(enemy_hand) < 17 or ( BJ.get_total(enemy_hand) < BJ.get_total(player_hand) and BJ.get_total(player_hand) < 21):
-            BJ.hit(enemy_hand)
+        while game_over == 0: # loop until player reaches 21 or greater, or until player chooses to stand
+            message = 0
+            embed_text = discord.Embed(title = "Blackjack") 
             
+            # prompt for choice
+            embed_text.add_field(name = "Status", value = "You have " + str(BJ.get_total(player_hand)) 
+                                 + " while the dealer has " + str(BJ.get_total(enemy_hand)) + ". Hit or stand?")
+            message = await ctx.send(embed=embed_text)
+        
+            # add reactions
+            i = 0
+            while i < len(emojis): # represent hit or stand with emojis
+                await message.add_reaction(emojis[i])
+                i += 1
+                
+            # wait for x seconds to allow reactions to come in
+            await asyncio.sleep(timer)
+            
+            # recreate message object with reactions included
+            message = await ctx.fetch_message(message.id)
+            
+            # create initial embed
+            embed_text = discord.Embed(title = "Blackjack") 
+            
+            # if reactions point to hit
+            if BJ.hit_or_stand(message) == 1: # hit
+                BJ.hit(player_hand)
+                
+                if BJ.get_total(player_hand) >= 21:
+                    game_over = 1
+            
+            else: # if reactions point to stand
+                    
+                game_over = 1
+        # end while
+        
+        # dealer's turn
+        # while dealer's hand is lower than 15 and dealer's hand is less than player's hand, if player's hand is less than 21
+        while (BJ.get_total(enemy_hand) < 15  or BJ.get_total(enemy_hand) < BJ.get_total(player_hand)) and BJ.get_total(player_hand) < 21:
+            BJ.hit(enemy_hand)
+        
+        # win/lose and reason for winning/losing
         final_status = BJ.get_result(player_hand, enemy_hand)
         
-        embed_text.add_field(name = "Status", value ="You have " + str(BJ.get_total(player_hand)) + " while the dealer has " + str(BJ.get_total(enemy_hand)) + ". " + final_status)
-        
+        # final message
+        embed_text.add_field(name = "Status", value = "You have " + str(BJ.get_total(player_hand)) 
+                             + " while the dealer has " + str(BJ.get_total(enemy_hand)) + ". " + final_status)
         await ctx.send(embed = embed_text)
-    
-    else: # if stand
-        while BJ.get_total(enemy_hand) < 17 or ( BJ.get_total(enemy_hand) < BJ.get_total(player_hand) and BJ.get_total(player_hand) < 21):
-            BJ.hit(enemy_hand)
-            
-        final_status = BJ.get_result(player_hand, enemy_hand)
         
-        embed_text.add_field(name = "Status", value = "You have " + str(BJ.get_total(player_hand)) + " while the dealer has " + str(BJ.get_total(enemy_hand)) + ". " + final_status)
-        await ctx.send(embed = embed_text)
+    # end else
     pass
 
 
